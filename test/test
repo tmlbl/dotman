@@ -31,7 +31,7 @@ else
   pass;
 fi
 
-printf "* Should import changes\n";
+printf "* Should import changes\n\n";
 
 echo "edit" > dir/.file;
 
@@ -46,6 +46,6 @@ else
 fi
 
 
-## All passing
+# All passing
 printf "\nAll tests passed!\n";
 cleanup;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Ubuntu
+# Ubuntu
 printf "\nStarting the Ubuntu test...\n\n";
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
@@ -10,7 +10,7 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
 docker stop -t 0 dotman_ubuntu;
 docker rm dotman_ubuntu;
 
-## Centos
+# Centos
 printf "\nStarting the Centos test...\n\n";
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
@@ -20,7 +20,7 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
 docker stop -t 0 dotman_centos;
 docker rm dotman_centos;
 
-## SUSE
+# SUSE
 printf "\nStarting the SUSE test...\n\n";
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
