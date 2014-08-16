@@ -27,7 +27,7 @@ add_action() {
   # Write the filepath pair to the register
   echo "$2  $1" >> "./.dotman";
   # Check if the write was successful
-  SUCCESS="$(cat .dotman | grep $1 | awk '{print $1}')";
+  SUCCESS="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ "$SUCCESS" ]; then
     printf "Added $1 to .dotman\n";
   else
