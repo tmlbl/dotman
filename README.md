@@ -39,11 +39,32 @@ cd ~/.dotfiles
 subl subl # make some changes
 dotman export subl
 ````
+#### Importing a dotfiles repository
+Clone the dotfiles repository and cd into it, ie:
+````
+git clone git@github.com:tmlbl/crunchbookpro
+cd crunchbookpro
+````
+Then, if you want to use the "vimrc" file, do:
+````
+dotman add ~/.vimrc vimrc
+dotman export vimrc
+````
 ### Development
 
 #### Running the tests
 The tests require you have docker up and running, and are able to run docker without sudo. To verify this:
-`docker ps`
+````
+docker ps
+````
 To run the tests:
-`./test/run`
+````
+./test/run
+````
 dotman is tested on Ubuntu, Centos and SUSE using docker.
+
+#### Workflow
+As soon as the dotman file is edited you may test your changes by using that executable, ie:
+````
+./dotman ls
+````
