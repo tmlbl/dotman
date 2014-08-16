@@ -47,8 +47,8 @@ cd crunchbookpro
 ````
 Then, if you want to use the "vimrc" file, do:
 ````
-dotman add ~/.vimrc vimrc
-dotman export vimrc
+dotman add ~/.vimrc .vimrc
+dotman export .vimrc
 ````
 ### Development
 
