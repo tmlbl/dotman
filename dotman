@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -e .dotman ]; then
-  echo "Creating a dotman file in the directory..."
+  echo "Creating a .dotman file in the directory..."
   touch .dotman
 fi
 
@@ -28,21 +28,19 @@ import() {
 remove() {
   exists=$(cat .dotman | grep $1)
   if [ "$exists" ]; then
-    regex="/$1/d"
-    echo "Removing" $1
+    regex="/$1/d";
+    echo "Removing" $1;
     sed -i $regex ./.dotman;
   else
-    echo $1 "not found!"
+    echo "Tag" $1 "not found!";
     exit 1;
   fi
 }
 
 # Parse arguments
 if [ "$1" = 'add' ]; then
-  if [ "$2" ];
-  then
-    if [ "$3" ];
-    then
+  if [ "$2" ]; then
+    if [ "$3" ]; then
       add $2 $3
     else
       echo "usage: dotman add [tag] [filepath]"
@@ -64,7 +62,7 @@ if [ "$1" = 'rm' ]; then
   if [ "$2" ]; then
     remove $2
   else
-    echo "usage: rm [tag]"
+    echo "usage: dotman rm [tag]"
   fi
 fi
 
