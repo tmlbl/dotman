@@ -33,6 +33,9 @@ When you make changes to a config and want to add them to your dotfiles repo:
 cd ~/.dotfiles
 dotman import subl
 ````
-Then, use git normally to version your files. If you pull changes from git that you want to use on your machine, just:
-`dotman export subl`
-And the changes will be written to the destination path.
+Or, make changes to the file inside your .dotfiles directory:
+````
+cd ~/.dotfiles
+subl subl # make some changes
+dotman export subl
+````
