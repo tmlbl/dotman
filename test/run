@@ -24,8 +24,8 @@ docker rm dotman_centos;
 printf "\nStarting the SUSE test...\n\n";
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
-    -w /test --name=suse_centos opensuse:latest \
+    -w /test --name=dotman_suse opensuse:latest \
     /bin/bash -c /test/test;
 
-docker stop -t 0 suse_centos;
-docker rm suse_centos;
+docker stop -t 0 dotman_suse;
+docker rm dotman_suse;
