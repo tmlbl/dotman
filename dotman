@@ -48,7 +48,8 @@ import_action() {
       DIFF_MSG="Create:\n";
     fi
     if [ "$DIFF_MSG" ]; then
-      printf "$DIFF_MSG\n$DIFF\n"
+      printf "$DIFF_MSG\n";
+      echo "$DIFF";
       read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
     else
       printf "$TARGET and $LOCAL are the same\n";
@@ -77,7 +78,8 @@ export_action() {
     DIFF_MSG=$(diff -q $LOCAL $TARGET);
     DIFF=$(diff $LOCAL $TARGET);
     if [ "$DIFF_MSG" ]; then
-      printf "$DIFF_MSG\n$DIFF\n";
+      printf "$DIFF_MSG\n";
+      echo "$DIFF";
       read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
     else
       printf "$LOCAL and $TARGET are the same\n";
