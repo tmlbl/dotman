@@ -1,7 +1,7 @@
 dotman
 ======
 
-A simple bash script for managing dotfiles.
+A simple bash script for managing dotfile repositories.
 
 ### The Problem
 I have configuration files in different locations on my machine, and I want to keep up-to-date copies of them together in a git repository, while keeping them in their existing locations as well.
