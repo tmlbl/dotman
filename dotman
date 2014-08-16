@@ -7,7 +7,7 @@
 # artifacts accidentally when the tool is used in the
 # wrong directory
 if [ ! -e "./.dotman" ]; then
-  read -p "No .dotman file here, create one? " -n 1 -r;
+  read -p "No .dotman file here, create one? [y/N] " -n 1 -r;
   printf "\n";
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     touch "./.dotman";
@@ -80,7 +80,7 @@ export_action() {
     if [ "$DIFF_MSG" ]; then
       printf "$DIFF_MSG\n";
       echo "$DIFF";
-      read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
+      read -p "Write $LOCAL to $TARGET? [Y/n] " -n 1 -r;
     else
       printf "$LOCAL and $TARGET are the same\n";
       exit 0;
@@ -94,13 +94,11 @@ export_action() {
 
 # The diff action displays a diff for the local and target files
 diff_action() {
-  # Verify the local file exists
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
     exit 1;
   fi
-  # Check if target file already exists
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   if [ -e "$TARGET" ]; then
     DIFF_MSG=$(diff -q $LOCAL $TARGET);
