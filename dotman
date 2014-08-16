@@ -40,24 +40,24 @@ import_action() {
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ -e "$TARGET" ]; then
-  	if [ -e "$LOCAL" ]; then
-  		DIFF=$(diff $TARGET ./$LOCAL);
-  		DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
-  	else
-  		DIFF="$LOCAL\n";
-  		DIFF_MSG="Create:\n";
-  	fi
-  	if [ "$DIFF_MSG" ]; then
-  		printf "$DIFF_MSG\n$DIFF\n"
-  		read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
-  	else
-  		printf "$TARGET and $LOCAL are the same\n";
-  		exit 0;
-  	fi
-		if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-  		cp $TARGET ./$LOCAL;
-  		printf "Imported $TARGET to $LOCAL\n";
-		fi
+    if [ -e "$LOCAL" ]; then
+    DIFF=$(diff $TARGET ./$LOCAL);
+    DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
+    else
+    DIFF="$LOCAL\n";
+    DIFF_MSG="Create:\n";
+    fi
+    if [ "$DIFF_MSG" ]; then
+    printf "$DIFF_MSG\n$DIFF\n"
+    read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
+    else
+    printf "$TARGET and $LOCAL are the same\n";
+    exit 0;
+    fi
+  if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    cp $TARGET ./$LOCAL;
+    printf "Imported $TARGET to $LOCAL\n";
+  fi
   else
     printf "$TARGET: File not found\n";
   fi
@@ -74,14 +74,14 @@ export_action() {
   # Check if target file already exists
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   if [ -e "$TARGET" ]; then
-  	DIFF_MSG=$(diff -q $LOCAL $TARGET);
-  	DIFF=$(diff $LOCAL $TARGET);
-  	if [ "$DIFF_MSG" ]; then
-  		printf "$DIFF_MSG\n$DIFF\n";
-    	read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
+    DIFF_MSG=$(diff -q $LOCAL $TARGET);
+    DIFF=$(diff $LOCAL $TARGET);
+    if [ "$DIFF_MSG" ]; then
+    printf "$DIFF_MSG\n$DIFF\n";
+      read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
     else
-    	printf "$LOCAL and $TARGET are the same\n";
-    	exit 0;
+      printf "$LOCAL and $TARGET are the same\n";
+      exit 0;
     fi
     if [[ ! $REPLY =~ ^[Nn]$ ]]; then
       cp $LOCAL $TARGET;
@@ -92,7 +92,7 @@ export_action() {
 
 # The diff action displays a diff for the local and target files
 diff_action() {
-	# Verify the local file exists
+  # Verify the local file exists
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
@@ -101,13 +101,13 @@ diff_action() {
   # Check if target file already exists
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   if [ -e "$TARGET" ]; then
-  	DIFF_MSG=$(diff -q $LOCAL $TARGET);
-  	DIFF=$(diff $LOCAL $TARGET);
-  	if [ "$DIFF_MSG" ]; then
-  		printf "$DIFF_MSG\n$DIFF\n";
+    DIFF_MSG=$(diff -q $LOCAL $TARGET);
+    DIFF=$(diff $LOCAL $TARGET);
+    if [ "$DIFF_MSG" ]; then
+    printf "$DIFF_MSG\n$DIFF\n";
     else
-    	printf "$LOCAL and $TARGET are the same\n";
-    	exit 0;
+      printf "$LOCAL and $TARGET are the same\n";
+      exit 0;
     fi
   fi
 }
