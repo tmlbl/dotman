@@ -37,6 +37,10 @@ remove() {
   fi
 }
 
+show() {
+  cat .dotman;
+}
+
 # Parse arguments
 if [ "$1" = 'add' ]; then
   if [ "$2" -a "$3" ]; then
@@ -60,5 +64,9 @@ if [ "$1" = 'rm' ]; then
   else
     echo "usage: dotman rm [tag]"
   fi
+fi
+
+if [ "$1" = 'show' ]; then
+  show
 fi
 
