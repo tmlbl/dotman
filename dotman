@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if [ ! -e .dotman ]; then
+  echo "Creating a dotman file in the directory..."
+  touch .dotman
+fi
+
+# The add action adds a filepath to the register
+add() {
+  # Check if a conflicting tag exists
+  tag="$(cat .dotman | grep $1 | awk '{print $2}')";
+  if [ "$tag" ]; then
+    echo "Conflicting tag exists:" $tag;
+    exit 1;
+  fi
+  echo "Adding" $1 "to .dotman";
+  echo "$1  $2" >> .dotman;
+}
+
+# The import action copies the source file to the dotman directory
+import() {
+  filepath="$(cat .dotman | grep $1 | awk '{print $2}')";
+  echo "Importing" $filepath;
+  cp $filepath .;
+}
+
+# The rm action removes a file from the register
+remove() {
+  exists=$(cat .dotman | grep $1)
+  if [ "$exists" ]; then
+    regex="/$1/d"
+    echo "Removing" $1
+    sed -i $regex ./.dotman;
+  else
+    echo $1 "not found!"
+    exit 1;
+  fi
+}
+
+# Parse arguments
+if [ "$1" = 'add' ]; then
+  if [ "$2" ];
+  then
+    if [ "$3" ];
+    then
+      add $2 $3
+    else
+      echo "usage: dotman add [tag] [filepath]"
+    fi
+  else
+    echo "usage: dotman add [tag] [filepath]"
+  fi
+fi
+
+if [ "$1" = 'import' ]; then
+  if [ "$2" ]; then
+    import $2
+  else
+    echo "usage: dotman import [tag]"
+  fi
+fi
+
+if [ "$1" = 'rm' ]; then
+  if [ "$2" ]; then
+    remove $2
+  else
+    echo "usage: rm [tag]"
+  fi
+fi
+
