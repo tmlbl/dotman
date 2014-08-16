@@ -1,86 +1,132 @@
 #!/bin/bash
 
-if [ ! -e .dotman ]; then
-  echo "Creating a .dotman file in the directory..."
-  touch .dotman
+# INIT
+
+# If we are in a directory with no .dotman file, prompt
+# the user to create one. Mainly to prevent creating
+# artifacts accidentally when the tool is used in the 
+# wrong directory
+if [ ! -e "./.dotman" ]; then
+  read -p "No .dotman file here, create one? " -n 1 -r;
+  printf "\n";
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    touch "./.dotman";
+  fi
 fi
+
+# ACTIONS
 
 # The add action adds a filepath to the register
 add() {
   # Check if a conflicting tag exists
-  tag="$(cat .dotman | grep $1 | awk '{print $2}')";
+  tag="$(cat .dotman | grep $1 | awk '{print $1}')";
   if [ "$tag" ]; then
-    echo "Conflicting tag exists:" $tag;
+    printf "Conflicting file exists: $tag\n";
     exit 1;
   fi
-  echo "Adding" $1 "to .dotman";
-  echo "$1  $2" >> .dotman;
+  # Write the tag and filepath to the register
+  echo "$1  $2" >> "./.dotman";
+  # Check if the write was successful
+  tag="$(cat .dotman | grep $1 | awk '{print $1}')";
+  if [ "$tag" ]; then
+    printf "Added $2 to .dotman\n";
+  else
+    printf "Couldn't write to .dotman file\n";
+  fi
 }
 
 # The import action copies the source file to the dotman directory
 import() {
   filepath="$(cat .dotman | grep $1 | awk '{print $2}')";
-  echo "Importing" $filepath;
-  cp $filepath .;
-}
-
-# The rm action removes a file from the register
-remove() {
-  exists=$(cat .dotman | grep $1)
-  if [ "$exists" ]; then
-    regex="/$1/d";
-    echo "Removing" $1;
-    sed -i $regex ./.dotman;
+  if [ -e "$filepath" ]; then
+    cp $filepath .;
+    printf "Imported $filepath\n";
   else
-    echo "Tag" $1 "not found!";
+    printf "$filepath: File not found\n";
     exit 1;
   fi
 }
 
-# The show command simply prints the register
-show() {
-  cat .dotman;
+xport() {
+  # Verify the local file exists
+  loc="$(ls -a | grep $1)";
+  if [ ! -e "$loc" ]; then
+    printf "$1: File not found\n";
+    exit 1;
+  fi
+  # Check if target file already exists
+  target="$(cat .dotman | grep $1 | awk '{print $2}')";
+  if [ -e "$target" ]; then
+    read -p "Will overwrite file at $target. Ok? " -n 1 -r;
+    printf "\n";
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      cp $loc $target;
+    fi
+  fi
 }
 
-# Help
+# The rm action removes a file from the register
+remove() {
+  exists=$(cat .dotman | grep $1);
+  if [ "$exists" ]; then
+    regex="/$1/d";
+    printf "Removing $1\n";
+    sed -i $regex "./.dotman";
+  else
+    printf "Tag $1 not found!\n";
+  fi
+}
+
+# The show command simply prints the register
+list() {
+  cat "./.dotman";
+}
+
+# The default task is to print usage information
 usage() {
   printf "Usage:\n";
-  printf "\tdotman add [tag] [filepath]\n";
-  printf "\tdotman import [tag]\n";
-  printf "\tdotman rm [tag]\n";
+  printf "\tdotman add [filename] [filepath]\n";
+  printf "\tdotman import [filename]\n";
+  printf "\tdotman export [filename]\n";
+  printf "\tdotman rm [filename]\n";
   printf "\tdotman show\n";
   printf "\tdotman help\n";
 }
 
-# Parse arguments
+# Parse and execute args
 if [ "$1" = 'add' ]; then
   if [ "$2" -a "$3" ]; then
     add $2 $3
+    import $2
   else
     usage
   fi
-fi
 
-if [ "$1" = 'import' ]; then
+elif [ "$1" = 'import' ]; then
   if [ "$2" ]; then
     import $2
   else
     usage
   fi
-fi
 
-if [ "$1" = 'rm' ]; then
+elif [ "$1" = 'export' ]; then
+  if [ "$2" ]; then
+    xport $2
+  else
+    usage
+  fi
+
+elif [ "$1" = 'rm' ]; then
   if [ "$2" ]; then
     remove $2
   else
     usage
   fi
-fi
 
-if [ "$1" = 'show' ]; then
-  show
-fi
+elif [ "$1" = 'ls' ]; then
+  list
 
-if [ "$1" = 'help' ]; then
+else
   usage
 fi
+
