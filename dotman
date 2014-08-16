@@ -49,6 +49,7 @@ usage() {
   printf "\tdotman import [tag]\n";
   printf "\tdotman rm [tag]\n";
   printf "\tdotman show\n";
+  printf "\tdotman help\n";
 }
 
 # Parse arguments
