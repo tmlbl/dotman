@@ -1,0 +1,31 @@
+#!/bin/bash
+
+## Ubuntu
+printf "\nStarting the Ubuntu test...\n\n";
+
+docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
+		-w /test --name=dotman_ubuntu ubuntu:latest \
+		/bin/bash -c /test/test;
+
+docker stop -t 0 dotman_ubuntu;
+docker rm dotman_ubuntu;
+
+## Centos
+printf "\nStarting the Centos test...\n\n";
+
+docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
+    -w /test --name=dotman_centos centos:latest \
+    /bin/bash -c /test/test;
+
+docker stop -t 0 dotman_centos;
+docker rm dotman_centos;
+
+## SUSE
+printf "\nStarting the SUSE test...\n\n";
+
+docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
+    -w /test --name=suse_centos opensuse:latest \
+    /bin/bash -c /test/test;
+
+docker stop -t 0 suse_centos;
+docker rm suse_centos;

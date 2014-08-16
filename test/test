@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Define pass/fail functions
+pass() {
+  printf "\n\tPASS\n\n";
+}
+
+fail() {
+  printf "Test failed\n";
+  cleanup;
+  exit 1;
+}
+
+cleanup() {
+  rm file;
+  echo "content" > dir/.file;
+  rm .dotman;
+}
+
+touch .dotman;
+
+printf "* Should add and import a file\n\n";
+
+/opt/bin/dotman add dir/.file file;
+
+FILE=$(cat file);
+
+if [ ! "$FILE" ]; then
+  fail;
+else
+  pass;
+fi
+
+printf "* Should import changes\n";
+
+echo "edit" > dir/.file;
+
+/opt/bin/dotman import file;
+
+RESULT=$(cat file | grep -w edit);
+
+if [ ! "$RESULT" ]; then
+  fail;
+else
+  pass;
+fi
+
+
+## All passing
+printf "\nAll tests passed!\n";
+cleanup;
