@@ -37,8 +37,18 @@ remove() {
   fi
 }
 
+# The show command simply prints the register
 show() {
   cat .dotman;
+}
+
+# Help
+usage() {
+  printf "Usage:\n";
+  printf "\tdotman add [tag] [filepath]\n";
+  printf "\tdotman import [tag]\n";
+  printf "\tdotman rm [tag]\n";
+  printf "\tdotman show\n";
 }
 
 # Parse arguments
@@ -46,7 +56,7 @@ if [ "$1" = 'add' ]; then
   if [ "$2" -a "$3" ]; then
     add $2 $3
   else
-    echo "usage: dotman add [tag] [filepath]"
+    usage
   fi
 fi
 
@@ -54,7 +64,7 @@ if [ "$1" = 'import' ]; then
   if [ "$2" ]; then
     import $2
   else
-    echo "usage: dotman import [tag]"
+    usage
   fi
 fi
 
@@ -62,7 +72,7 @@ if [ "$1" = 'rm' ]; then
   if [ "$2" ]; then
     remove $2
   else
-    echo "usage: dotman rm [tag]"
+    usage
   fi
 fi
 
