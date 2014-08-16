@@ -4,7 +4,7 @@
 
 # If we are in a directory with no .dotman file, prompt
 # the user to create one. Mainly to prevent creating
-# artifacts accidentally when the tool is used in the 
+# artifacts accidentally when the tool is used in the
 # wrong directory
 if [ ! -e "./.dotman" ]; then
   read -p "No .dotman file here, create one? " -n 1 -r;
@@ -16,117 +16,141 @@ fi
 
 # ACTIONS
 
-# The add action adds a filepath to the register
-add() {
-  # Check if a conflicting tag exists
-  tag="$(cat .dotman | grep $1 | awk '{print $1}')";
-  if [ "$tag" ]; then
-    printf "Conflicting file exists: $tag\n";
+# The add action adds a local/target filepath pair to the register
+add_action() {
+  # Check if a conflicting entry exists
+  EXISTS="$(cat .dotman | grep $1 | awk '{print $1}')";
+  if [ "$EXISTS" ]; then
+    printf "Conflicting entry exists: $EXISTS\n";
     exit 1;
   fi
-  # Write the tag and filepath to the register
-  echo "$1  $2" >> "./.dotman";
+  # Write the filepath pair to the register
+  echo "$2  $1" >> "./.dotman";
   # Check if the write was successful
-  tag="$(cat .dotman | grep $1 | awk '{print $1}')";
-  if [ "$tag" ]; then
-    printf "Added $2 to .dotman\n";
+  SUCCESS="$(cat .dotman | grep $1 | awk '{print $1}')";
+  if [ "$SUCCESS" ]; then
+    printf "Added $1 to .dotman\n";
   else
     printf "Couldn't write to .dotman file\n";
   fi
 }
 
-# The import action copies the source file to the dotman directory
-import() {
-  filepath="$(cat .dotman | grep $1 | awk '{print $2}')";
-  if [ -e "$filepath" ]; then
-    cp $filepath .;
-    printf "Imported $filepath\n";
+# The import action overwrites the local file with the target file
+import_action() {
+  TARGET="$(cat .dotman | grep "$1" | awk '{print $2}')";
+  LOCAL="$(cat .dotman | grep "$1" | awk '{print $1}')";
+  if [ -e "$TARGET" ]; then
+  	if [ -e "$LOCAL" ]; then
+  		DIFF=$(diff $TARGET ./$LOCAL);
+  		DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
+  	else
+  		DIFF="$LOCAL\n";
+  		DIFF_MSG="Create:\n";
+  	fi
+  	if [ "$DIFF_MSG" ]; then
+  		printf "$DIFF_MSG\n$DIFF\n"
+  		read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
+  	else
+  		printf "$TARGET and $LOCAL are the same\n";
+  		exit 0;
+  	fi
+		if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+  		cp $TARGET ./$LOCAL;
+  		printf "Imported $TARGET to $LOCAL\n";
+		fi
   else
-    printf "$filepath: File not found\n";
-    exit 1;
+    printf "$TARGET: File not found\n";
   fi
 }
 
-xport() {
+# The export action overwrites the relative file with the local file
+export_action() {
   # Verify the local file exists
-  loc="$(ls -a | grep $1)";
-  if [ ! -e "$loc" ]; then
+  LOCAL="$(cat .dotman | grep "$1" | awk '{print $1}')";
+  if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
     exit 1;
   fi
   # Check if target file already exists
-  target="$(cat .dotman | grep $1 | awk '{print $2}')";
-  if [ -e "$target" ]; then
-    read -p "Will overwrite file at $target. Ok? " -n 1 -r;
-    printf "\n";
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      cp $loc $target;
+  TARGET="$(cat .dotman | grep "$1" | awk '{print $2}')";
+  if [ -e "$TARGET" ]; then
+  	DIFF_MSG=$(diff -q $LOCAL $TARGET);
+  	DIFF=$(diff $LOCAL $TARGET);
+  	if [ "$DIFF_MSG" ]; then
+  		printf "$DIFF_MSG\n$DIFF\n";
+    	read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
+    else
+    	printf "$LOCAL and $TARGET are the same\n";
+    	exit 0;
+    fi
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+      cp $LOCAL $TARGET;
+      printf "Wrote to $TARGET\n";
     fi
   fi
 }
 
-# The rm action removes a file from the register
-remove() {
-  exists=$(cat .dotman | grep $1);
-  if [ "$exists" ]; then
-    regex="/$1/d";
-    printf "Removing $1\n";
-    sed -i $regex "./.dotman";
+# The rm action removes a filepath pair from the register
+remove_action() {
+  EXISTS=$(cat .dotman | grep $1);
+  if [ "$EXISTS" ]; then
+    REGEX="/$1/d";
+    sed -i $REGEX "./.dotman";
+    printf "Removed $1 from .dotman\n";
   else
-    printf "Tag $1 not found!\n";
+    printf "$1: Entry not found\n";
   fi
 }
 
-# The show command simply prints the register
-list() {
+# The list action simply prints the register
+list_action() {
   cat "./.dotman";
 }
 
-# The default task is to print usage information
-usage() {
+# The default action is to print usage information
+usage_info() {
   printf "Usage:\n";
-  printf "\tdotman add [filename] [filepath]\n";
+  printf "\tdotman add [filepath] [filename]\n";
   printf "\tdotman import [filename]\n";
   printf "\tdotman export [filename]\n";
   printf "\tdotman rm [filename]\n";
-  printf "\tdotman show\n";
+  printf "\tdotman ls\n";
   printf "\tdotman help\n";
 }
 
 # Parse and execute args
 if [ "$1" = 'add' ]; then
   if [ "$2" -a "$3" ]; then
-    add $2 $3
-    import $2
+    add_action $2 $3
+    import_action $2
   else
-    usage
+    usage_info
   fi
 
 elif [ "$1" = 'import' ]; then
   if [ "$2" ]; then
-    import $2
+    import_action $2
   else
-    usage
+    usage_info
   fi
 
 elif [ "$1" = 'export' ]; then
   if [ "$2" ]; then
-    xport $2
+    export_action $2
   else
-    usage
+    usage_info
   fi
 
 elif [ "$1" = 'rm' ]; then
   if [ "$2" ]; then
-    remove $2
+    remove_action $2
   else
-    usage
+    usage_info
   fi
 
 elif [ "$1" = 'ls' ]; then
-  list
+  list_action
 
 else
-  usage
+  usage_info
 fi
-
