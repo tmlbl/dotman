@@ -39,12 +39,8 @@ remove() {
 
 # Parse arguments
 if [ "$1" = 'add' ]; then
-  if [ "$2" ]; then
-    if [ "$3" ]; then
-      add $2 $3
-    else
-      echo "usage: dotman add [tag] [filepath]"
-    fi
+  if [ "$2" -a "$3" ]; then
+    add $2 $3
   else
     echo "usage: dotman add [tag] [filepath]"
   fi
