@@ -19,10 +19,10 @@ fi
 # The add action adds a local/target filepath pair to the register
 add_action() {
   # Check if a conflicting entry exists
-  EXISTS="$(cat .dotman | grep $1 | awk '{print $1}')";
+  EXISTS="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ "$EXISTS" ]; then
     printf "Conflicting entry exists: $EXISTS\n";
-    exit 1;
+    exit 0;
   fi
   # Write the filepath pair to the register
   echo "$2  $1" >> "./.dotman";
@@ -37,8 +37,8 @@ add_action() {
 
 # The import action overwrites the local file with the target file
 import_action() {
-  TARGET="$(cat .dotman | grep "$1" | awk '{print $2}')";
-  LOCAL="$(cat .dotman | grep "$1" | awk '{print $1}')";
+  TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
+  LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ -e "$TARGET" ]; then
   	if [ -e "$LOCAL" ]; then
   		DIFF=$(diff $TARGET ./$LOCAL);
@@ -66,13 +66,13 @@ import_action() {
 # The export action overwrites the relative file with the local file
 export_action() {
   # Verify the local file exists
-  LOCAL="$(cat .dotman | grep "$1" | awk '{print $1}')";
+  LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
     exit 1;
   fi
   # Check if target file already exists
-  TARGET="$(cat .dotman | grep "$1" | awk '{print $2}')";
+  TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   if [ -e "$TARGET" ]; then
   	DIFF_MSG=$(diff -q $LOCAL $TARGET);
   	DIFF=$(diff $LOCAL $TARGET);
@@ -90,13 +90,35 @@ export_action() {
   fi
 }
 
+# The diff action displays a diff for the local and target files
+diff_action() {
+	# Verify the local file exists
+  LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
+  if [ ! -e "$LOCAL" ]; then
+    printf "$1: File not found\n";
+    exit 1;
+  fi
+  # Check if target file already exists
+  TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
+  if [ -e "$TARGET" ]; then
+  	DIFF_MSG=$(diff -q $LOCAL $TARGET);
+  	DIFF=$(diff $LOCAL $TARGET);
+  	if [ "$DIFF_MSG" ]; then
+  		printf "$DIFF_MSG\n$DIFF\n";
+    else
+    	printf "$LOCAL and $TARGET are the same\n";
+    	exit 0;
+    fi
+  fi
+}
+
 # The rm action removes a filepath pair from the register
 remove_action() {
-  EXISTS=$(cat .dotman | grep $1);
+  EXISTS=$(cat .dotman | grep -w "$1");
   if [ "$EXISTS" ]; then
     REGEX="/$1/d";
     sed -i $REGEX "./.dotman";
-    printf "Removed $1 from .dotman\n";
+    printf "Removed $EXISTS from .dotman\n";
   else
     printf "$1: Entry not found\n";
   fi
@@ -113,6 +135,7 @@ usage_info() {
   printf "\tdotman add [filepath] [filename]\n";
   printf "\tdotman import [filename]\n";
   printf "\tdotman export [filename]\n";
+  printf "\tdotman diff [filename]\n";
   printf "\tdotman rm [filename]\n";
   printf "\tdotman ls\n";
   printf "\tdotman help\n";
@@ -137,6 +160,13 @@ elif [ "$1" = 'import' ]; then
 elif [ "$1" = 'export' ]; then
   if [ "$2" ]; then
     export_action $2
+  else
+    usage_info
+  fi
+
+elif [ "$1" = 'diff' ]; then
+  if [ "$2" ]; then
+    diff_action $2
   else
     usage_info
   fi
