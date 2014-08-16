@@ -41,18 +41,18 @@ import_action() {
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ -e "$TARGET" ]; then
     if [ -e "$LOCAL" ]; then
-    DIFF=$(diff $TARGET ./$LOCAL);
-    DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
+      DIFF=$(diff $TARGET ./$LOCAL);
+      DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
     else
-    DIFF="$LOCAL\n";
-    DIFF_MSG="Create:\n";
+      DIFF="$LOCAL\n";
+      DIFF_MSG="Create:\n";
     fi
     if [ "$DIFF_MSG" ]; then
-    printf "$DIFF_MSG\n$DIFF\n"
-    read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
+      printf "$DIFF_MSG\n$DIFF\n"
+      read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
     else
-    printf "$TARGET and $LOCAL are the same\n";
-    exit 0;
+      printf "$TARGET and $LOCAL are the same\n";
+      exit 0;
     fi
   if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     cp $TARGET ./$LOCAL;
@@ -77,7 +77,7 @@ export_action() {
     DIFF_MSG=$(diff -q $LOCAL $TARGET);
     DIFF=$(diff $LOCAL $TARGET);
     if [ "$DIFF_MSG" ]; then
-    printf "$DIFF_MSG\n$DIFF\n";
+      printf "$DIFF_MSG\n$DIFF\n";
       read -p "Will write diff to $TARGET. Ok? [Y/n] " -n 1 -r;
     else
       printf "$LOCAL and $TARGET are the same\n";
@@ -104,7 +104,8 @@ diff_action() {
     DIFF_MSG=$(diff -q $LOCAL $TARGET);
     DIFF=$(diff $LOCAL $TARGET);
     if [ "$DIFF_MSG" ]; then
-    printf "$DIFF_MSG\n$DIFF\n";
+      printf "$DIFF_MSG\n";
+      echo "$DIFF";
     else
       printf "$LOCAL and $TARGET are the same\n";
       exit 0;

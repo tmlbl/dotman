@@ -10,8 +10,8 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
 docker stop -t 0 dotman_ubuntu;
 docker rm dotman_ubuntu;
 
-# Centos
-printf "\nStarting the Centos test...\n\n";
+# CentOS
+printf "\nStarting the CentOS test...\n\n";
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
     -w /test --name=dotman_centos centos:latest \
