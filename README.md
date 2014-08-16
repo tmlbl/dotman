@@ -7,9 +7,13 @@ A simple bash script for managing dotfiles.
 I have configuration files in different locations on my machine, and I want to keep up-to-date copies of them together in a git repository, while keeping them in their existing locations as well.
 
 ### Installation
-Just copy the script into your bin:
+Clone this repository, then copy the script into your bin:
 
 `sudo cp dotman /usr/bin/dotman`
+
+Or, if you prefer one easy step:
+
+`sudo curl -o /usr/bin/dotman https://raw.githubusercontent.com/tmlbl/dotman/master/dotman && sudo chmod +x /usr/bin/dotman`
 
 ### Usage
 Add a file to the register:
