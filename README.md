@@ -39,3 +39,11 @@ cd ~/.dotfiles
 subl subl # make some changes
 dotman export subl
 ````
+### Development
+
+#### Running the tests
+The tests require you have docker up and running, and are able to run docker without sudo. To verify this:
+`docker ps`
+To run the tests:
+`./test/run`
+dotman is tested on Ubuntu, Centos and SUSE using docker.
