@@ -6,7 +6,7 @@ pass() {
 }
 
 fail() {
-  printf "Test failed\n";
+  printf "\n\tFAIL\n\n";
   cleanup;
   exit 1;
 }
@@ -45,7 +45,20 @@ else
   pass;
 fi
 
+printf "* Should export changes\n\n";
+
+echo "content" > dir/.file;
+
+/opt/bin/dotman export file;
+
+RESULT=$(cat dir/.file | grep -w edit);
+
+if [ ! "$RESULT" ]; then
+  fail;
+else
+  pass;
+fi
+
 
 # All passing
-printf "\nAll tests passed!\n";
 cleanup;

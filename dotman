@@ -8,8 +8,8 @@
 # wrong directory
 if [ ! -e "./.dotman" ]; then
   read -p "No .dotman file here, create one? [y/N] " -n 1 -r;
-  printf "\n";
   if [[ $REPLY =~ ^[Yy]$ ]]; then
+    printf "\n";
     touch "./.dotman";
   fi
 fi
