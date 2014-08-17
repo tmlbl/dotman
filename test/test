@@ -27,10 +27,10 @@ it "Should add and import a file";
 
 /opt/bin/dotman add dir/.file file;
 FILE=$(cat file);
-if [ ! "$FILE" ]; then
-  fail;
-else
+if [ "$FILE" ]; then
   pass;
+else
+  fail;
 fi
 
 it "Should import changes";
@@ -38,10 +38,10 @@ it "Should import changes";
 echo "edit" > dir/.file;
 /opt/bin/dotman import file;
 RESULT=$(cat file | grep -w edit);
-if [ ! "$RESULT" ]; then
-  fail;
-else
+if [ "$RESULT" ]; then
   pass;
+else
+  fail;
 fi
 
 it "Should export changes";
@@ -49,10 +49,10 @@ it "Should export changes";
 echo "content" > dir/.file;
 /opt/bin/dotman export file;
 RESULT=$(cat dir/.file | grep -w edit);
-if [ ! "$RESULT" ]; then
-  fail;
-else
+if [ "$RESULT" ]; then
   pass;
+else
+  fail;
 fi
 
 it "Should detect that files are same";
