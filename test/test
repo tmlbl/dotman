@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# Define pass/fail functions
+# Define testing helper functions
+it() {
+  printf "\n* $1\n\n"
+}
+
 pass() {
-  printf "\n\tPASS\n\n";
+  printf "\n\tPASS\n";
 }
 
 fail() {
-  printf "\n\tFAIL\n\n";
+  printf "\n\tFAIL\n";
   cleanup;
   exit 1;
 }
@@ -19,7 +23,7 @@ cleanup() {
 
 touch .dotman;
 
-printf "* Should add and import a file\n\n";
+it "Should add and import a file";
 
 /opt/bin/dotman add dir/.file file;
 FILE=$(cat file);
@@ -29,7 +33,7 @@ else
   pass;
 fi
 
-printf "* Should import changes\n\n";
+it "Should import changes";
 
 echo "edit" > dir/.file;
 /opt/bin/dotman import file;
@@ -40,7 +44,7 @@ else
   pass;
 fi
 
-printf "* Should export changes\n\n";
+it "Should export changes";
 
 echo "content" > dir/.file;
 /opt/bin/dotman export file;
@@ -51,7 +55,7 @@ else
   pass;
 fi
 
-printf "* Should detect that files are same\n\n";
+it "Should detect that files are same";
 
 /opt/bin/dotman export file > out.log;
 OUT=$(cat out.log | grep -w "same");
@@ -62,7 +66,7 @@ else
   fail;
 fi
 
-printf "* Should remove an entry from the registry\n\n";
+it "Should remove an entry from the registry";
 
 /opt/bin/dotman rm file;
 RESULT=$(cat .dotman | grep -w "file");
