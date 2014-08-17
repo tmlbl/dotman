@@ -112,7 +112,7 @@ diff_action() {
       echo "$DIFF";
     else
       printf "$LOCAL and $TARGET are the same\n";
-      exit 0;
+      exit;
     fi
   fi
 }

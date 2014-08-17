@@ -7,18 +7,12 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
     -w /test --name=dotman_ubuntu ubuntu:latest \
     /bin/bash -c /test/test &&
 
-UBU=$(docker stop -t 0 dotman_ubuntu) &&
-UBU=$(docker rm dotman_ubuntu) &&
-
 # CentOS
 printf "\nStarting the CentOS test...\n" &&
 
 docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
     -w /test --name=dotman_centos centos:latest \
     /bin/bash -c /test/test &&
-
-COS=$(docker stop -t 0 dotman_centos) &&
-COS=$(docker rm dotman_centos) &&
 
 # SUSE
 printf "\nStarting the SUSE test...\n" &&
@@ -27,6 +21,12 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
     -w /test --name=dotman_suse opensuse:latest \
     /bin/bash -c /test/test &&
 
-SUS=$(docker stop -t 0 dotman_suse) &&
-SUS=$(docker rm dotman_suse) &&
 printf "\n\tAll tests passed!\n\n";
+printf "Removing containers...\n\n";
+
+SUS=$(docker stop -t 0 dotman_suse);
+SUS=$(docker rm dotman_suse);
+UBU=$(docker stop -t 0 dotman_ubuntu);
+UBU=$(docker rm dotman_ubuntu);
+COS=$(docker stop -t 0 dotman_centos);
+COS=$(docker rm dotman_centos);
