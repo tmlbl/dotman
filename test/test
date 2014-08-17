@@ -2,7 +2,7 @@
 
 # Define testing helper functions
 it() {
-  printf "\n* $1\n\n"
+  printf "\n* $1\n\n";
 }
 
 pass() {
