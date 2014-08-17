@@ -59,6 +59,17 @@ else
   pass;
 fi
 
+printf "* Should remove an entry\n\n";
+
+/opt/bin/dotman rm file;
+
+RESULT=$(cat .dotman | grep -w file);
+
+if [ "$RESULT" ]; then
+  fail;
+else
+  pass;
+fi
 
 # All passing
 cleanup;

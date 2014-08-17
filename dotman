@@ -115,7 +115,7 @@ diff_action() {
 
 # The rm action removes a filepath pair from the register
 remove_action() {
-  EXISTS=$(cat .dotman | grep -w "$1");
+  EXISTS=$(cat .dotman | awk '{print $1}' | grep -w "$1");
   if [ "$EXISTS" ]; then
     REGEX="/$1/d";
     sed -i $REGEX "./.dotman";
