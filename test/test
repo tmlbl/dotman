@@ -22,9 +22,7 @@ touch .dotman;
 printf "* Should add and import a file\n\n";
 
 /opt/bin/dotman add dir/.file file;
-
 FILE=$(cat file);
-
 if [ ! "$FILE" ]; then
   fail;
 else
@@ -34,11 +32,8 @@ fi
 printf "* Should import changes\n\n";
 
 echo "edit" > dir/.file;
-
 /opt/bin/dotman import file;
-
 RESULT=$(cat file | grep -w edit);
-
 if [ ! "$RESULT" ]; then
   fail;
 else
@@ -48,11 +43,8 @@ fi
 printf "* Should export changes\n\n";
 
 echo "content" > dir/.file;
-
 /opt/bin/dotman export file;
-
 RESULT=$(cat dir/.file | grep -w edit);
-
 if [ ! "$RESULT" ]; then
   fail;
 else
@@ -62,9 +54,7 @@ fi
 printf "* Should remove an entry\n\n";
 
 /opt/bin/dotman rm file;
-
 RESULT=$(cat .dotman | grep -w file);
-
 if [ "$RESULT" ]; then
   fail;
 else
