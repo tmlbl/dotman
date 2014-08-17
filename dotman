@@ -22,10 +22,14 @@ add_action() {
   EXISTS="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ "$EXISTS" ]; then
     printf "Conflicting entry exists: $EXISTS\n";
-    exit 0;
+    exit;
+  fi
+  if [ ! -e "$1" ]; then
+    printf "$1: File not found\n";
+    exit;
   fi
   # Write the filepath pair to the register
-  echo "$2  $1" >> "./.dotman";
+  printf "$2\t$1\n" >> "./.dotman";
   # Check if the write was successful
   SUCCESS="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ "$SUCCESS" ]; then
@@ -44,20 +48,20 @@ import_action() {
       DIFF=$(diff $TARGET ./$LOCAL);
       DIFF_MSG=$(diff -q $TARGET ./$LOCAL);
     else
-      DIFF="$LOCAL\n";
-      DIFF_MSG="Create:\n";
+      DIFF="./$LOCAL";
+      DIFF_MSG="Create file:";
     fi
     if [ "$DIFF_MSG" ]; then
-      printf "$DIFF_MSG\n";
+      printf "$DIFF_MSG ";
       echo "$DIFF";
-      read -p "Write $TARGET to $LOCAL? [ Y/n ] " -n 1 -r;
+      read -p "Write $TARGET to ./$LOCAL? [ Y/n ] " -n 1 -r;
     else
-      printf "$TARGET and $LOCAL are the same\n";
-      exit 0;
+      printf "$TARGET and ./$LOCAL are the same\n";
+      exit;
     fi
   if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     cp $TARGET ./$LOCAL;
-    printf "Imported $TARGET to $LOCAL\n";
+    printf "Imported $TARGET to ./$LOCAL\n";
   fi
   else
     printf "$TARGET: File not found\n";
@@ -70,7 +74,7 @@ export_action() {
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
-    exit 1;
+    exit;
   fi
   # Check if target file already exists
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
@@ -83,7 +87,7 @@ export_action() {
       read -p "Write $LOCAL to $TARGET? [Y/n] " -n 1 -r;
     else
       printf "$LOCAL and $TARGET are the same\n";
-      exit 0;
+      exit;
     fi
     if [[ ! $REPLY =~ ^[Nn]$ ]]; then
       cp $LOCAL $TARGET;
@@ -97,7 +101,7 @@ diff_action() {
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
-    exit 1;
+    exit;
   fi
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
   if [ -e "$TARGET" ]; then
@@ -132,6 +136,7 @@ list_action() {
 
 # The default action is to print usage information
 usage_info() {
+  printf "dotman v0.0.1\n";
   printf "Usage:\n";
   printf "\tdotman add [filepath] [filename]\n";
   printf "\tdotman import [filename]\n";
@@ -139,49 +144,50 @@ usage_info() {
   printf "\tdotman diff [filename]\n";
   printf "\tdotman rm [filename]\n";
   printf "\tdotman ls\n";
-  printf "\tdotman help\n";
 }
 
 # Parse and execute args
 if [ "$1" = 'add' ]; then
   if [ "$2" -a "$3" ]; then
-    add_action $2 $3
-    import_action $2
+    add_action $2 $3;
+    import_action $2;
+  elif [ ! "$3" ]; then
+    printf "add $2: Please specify an alias\n";
   else
-    usage_info
+    usage_info;
   fi
 
 elif [ "$1" = 'import' ]; then
   if [ "$2" ]; then
-    import_action $2
+    import_action $2;
   else
-    usage_info
+    usage_info;
   fi
 
 elif [ "$1" = 'export' ]; then
   if [ "$2" ]; then
-    export_action $2
+    export_action $2;
   else
-    usage_info
+    usage_info;
   fi
 
 elif [ "$1" = 'diff' ]; then
   if [ "$2" ]; then
-    diff_action $2
+    diff_action $2;
   else
-    usage_info
+    usage_info;
   fi
 
 elif [ "$1" = 'rm' ]; then
   if [ "$2" ]; then
-    remove_action $2
+    remove_action $2;
   else
-    usage_info
+    usage_info;
   fi
 
 elif [ "$1" = 'ls' ]; then
-  list_action
+  list_action;
 
 else
-  usage_info
+  usage_info;
 fi

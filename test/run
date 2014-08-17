@@ -29,5 +29,4 @@ docker run -v $(pwd)/test:/test -v $(pwd):/opt/bin \
 
 docker stop -t 0 dotman_suse &&
 docker rm dotman_suse &&
-
 printf "\n\tAll tests passed!\n\n";
