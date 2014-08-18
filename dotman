@@ -57,7 +57,7 @@ import_action() {
       read -p "Write $TARGET to ./$LOCAL? [ Y/n ] " -n 1 -r;
     else
       printf "$TARGET and ./$LOCAL are the same\n";
-      exit;
+      return;
     fi
   if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     cp $TARGET ./$LOCAL;
@@ -68,13 +68,18 @@ import_action() {
   fi
 }
 
+import_all() {
+  for i in $(cat .dotman | awk '{print $1}'); do
+    import_action $i;
+  done;
+}
+
 # The export action overwrites the relative file with the local file
 export_action() {
   # Verify the local file exists
   LOCAL="$(cat .dotman | grep -w "$1" | awk '{print $1}')";
   if [ ! -e "$LOCAL" ]; then
     printf "$1: File not found\n";
-    exit;
   fi
   # Check if target file already exists
   TARGET="$(cat .dotman | grep -w "$1" | awk '{print $2}')";
@@ -87,13 +92,19 @@ export_action() {
       read -p "Write $LOCAL to $TARGET? [Y/n] " -n 1 -r;
     else
       printf "$LOCAL and $TARGET are the same\n";
-      exit;
+      return;
     fi
     if [[ ! $REPLY =~ ^[Nn]$ ]]; then
       cp $LOCAL $TARGET;
       printf "Wrote to $TARGET\n";
     fi
   fi
+}
+
+export_all() {
+  for i in $(cat .dotman | awk '{print $1}'); do
+    export_action $i;
+  done;
 }
 
 # The diff action displays a diff for the local and target files
@@ -161,14 +172,14 @@ elif [ "$1" = 'import' ]; then
   if [ "$2" ]; then
     import_action $2;
   else
-    usage_info;
+    import_all;
   fi
 
 elif [ "$1" = 'export' ]; then
   if [ "$2" ]; then
     export_action $2;
   else
-    usage_info;
+    export_all;
   fi
 
 elif [ "$1" = 'diff' ]; then
